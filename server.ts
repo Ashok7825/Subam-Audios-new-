@@ -22,11 +22,8 @@ const app = express();
 
 const isCloudRun = !!process.env.K_SERVICE;
 const isProduction = process.env.NODE_ENV === 'production' || isCloudRun;
-// Cloud Run injects process.env.PORT (defaults to 8080).
-// In AI Studio dev sandbox, nginx listens on 8080 and proxies to 3000, so dev server MUST listen on 3000.
-const PORT = isCloudRun || (process.env.NODE_ENV === 'production' && process.env.PORT)
-  ? (Number(process.env.PORT) || 8080)
-  : 3000;
+// Render and Cloud Run inject process.env.PORT; use the local development port otherwise.
+const PORT = Number(process.env.PORT) || (isProduction ? 8080 : 3000);
 
 app.use(express.json({ limit: '50mb' }));
 app.use(express.urlencoded({ extended: true, limit: '50mb' }));
